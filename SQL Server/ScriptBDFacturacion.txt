@@ -64,3 +64,58 @@ from Articulo
 
 GO
 
+CREATE procedure SP_Create_FormaPago
+as
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[SP_Create_FormaPago]
+    @idFormaPago INT,
+    @nombre NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF @idFormaPago = 0
+    BEGIN
+        INSERT INTO dbo.FormaPago (nombre)
+        VALUES (@nombre)
+    END
+    ELSE
+    BEGIN
+        UPDATE dbo.FormaPago
+        SET nombre = @nombre
+        WHERE idFormaPago = @idFormaPago
+    END
+END
+
+GO
+
+CREATE procedure SP_Create_Articulo
+as
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[SP_Create_Articulo]
+    @idArticulo INT,
+    @nombre NVARCHAR(200),
+    @precioUnitario DECIMAL(18,2)
+AS
+BEGIN
+    IF @idArticulo = 0
+    BEGIN
+        INSERT INTO Articulo (nombre, precioUnitario)
+        VALUES (@nombre, @precioUnitario)
+    END
+    ELSE
+    BEGIN
+        UPDATE Articulo
+        SET nombre = @nombre,
+            precioUnitario = @precioUnitario
+        WHERE idArticulo = @idArticulo
+    END
+END
+
+GO

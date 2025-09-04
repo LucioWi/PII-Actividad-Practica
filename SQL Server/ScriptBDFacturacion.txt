@@ -1,0 +1,66 @@
+CREATE DATABASE PII_Facturacion
+
+GO
+
+USE PII_Facturacion;
+GO
+
+CREATE TABLE FormaPago (
+    idFormaPago INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Articulo (
+    idArticulo INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100) NOT NULL,
+    precioUnitario DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE Factura (
+    nroFactura INT PRIMARY KEY,
+    fecha DATE NOT NULL,
+    idFormaPago INT NOT NULL,
+    cliente NVARCHAR(100) NOT NULL,
+    CONSTRAINT FK_Factura_FormaPago FOREIGN KEY (idFormaPago) REFERENCES FormaPago(idFormaPago)
+);
+
+CREATE TABLE DetalleFactura (
+    idDetalle INT IDENTITY(1,1) PRIMARY KEY,
+    nroFactura INT NOT NULL,
+    idArticulo INT NOT NULL,
+    cantidad INT NOT NULL CHECK (cantidad > 0),
+    CONSTRAINT FK_DetalleFactura_Factura FOREIGN KEY (nroFactura) REFERENCES Factura(nroFactura),
+    CONSTRAINT FK_DetalleFactura_Articulo FOREIGN KEY (idArticulo) REFERENCES Articulo(idArticulo)
+);
+
+GO
+
+CREATE procedure SP_Get_FormaPago
+as
+select nombre as 'Tipo de pago'
+from FormaPago
+
+GO
+
+CREATE procedure SP_Get_Factura
+as
+select nroFactura as 'Número de factura', fecha as Fecha, fp.nombre as 'Forma de pago', cliente as Cliente
+from Factura as f join FormaPago as fp on f.idFormaPago = fp.idFormaPago
+
+GO
+
+CREATE procedure SP_Get_DetalleFactura
+as
+select f.nroFactura as 'Número de factura', a.nombre as 'Articulo', cantidad Cantidad
+from DetalleFactura as df join Factura as f on df.nroFactura = f.nroFactura
+join Articulo as a on df.idArticulo = a.idArticulo
+
+GO
+
+CREATE procedure SP_Get_ArticuloPago
+as
+select nombre as 'Nombre', precioUnitario as 'Precio unitario'
+from Articulo
+
+GO
+

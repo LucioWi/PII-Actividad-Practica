@@ -11,7 +11,16 @@ namespace Practica01.Data
     {
         public bool Delete(int id)
         {
-            throw new NotImplementedException();
+            List<SpParameter> param = new List<SpParameter>()
+            {
+                new SpParameter()
+                {
+                    Name = "@codigo",
+                    Valor = id
+                }
+            };
+
+            return DataHelper.GetInstance().ExecuteSpDml("SP_REGISTRAR_BAJA_PRODUCTO", param);
         }
 
         public List<Invoice> GetAll()

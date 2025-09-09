@@ -6,7 +6,17 @@ using System.Threading.Tasks;
 
 namespace Practica01.Data
 {
-    internal class SpParameter
+    public class SpParameter
     {
+        public string Name { get; set; }
+        public object Valor { get; set; }
+
+        public SpParameter() { }
+
+        public SpParameter(string name, object valor)
+        {
+            this.Name = name;
+            this.Valor = valor;
+        }
     }
 }

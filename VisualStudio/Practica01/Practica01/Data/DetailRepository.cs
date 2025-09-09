@@ -25,14 +25,13 @@ namespace Practica01.Data
             // Mapear cada DataRow a un Ingredient
             foreach (DataRow row in dt.Rows)
             {
-                DetailInvoice i = new DetailInvoice();
-                i.Codigo = (int)row["codigo"];
-                i.Nombre = (string)row["n_ingrediente"];
-                i.Codigo_Producto = (int)row["codigo_producto"];
-                i.Cantidad = (double)row["cantidad"];
-                i.Unidad = (string)row["unidad"];
+                DetailInvoice dv = new DetailInvoice();
+                dv.Id = (int)row["idDetalleFactura"];
+                dv.NroFactura = (int)row["nroFactura"];
+                dv.IdArticulo = (List<Article>)row["idArticulo"];
+                dv.Cantidad = (int)row["cantidad"];
 
-                lst.Add(i);
+                lst.Add(dv);
             }
 
             return lst;

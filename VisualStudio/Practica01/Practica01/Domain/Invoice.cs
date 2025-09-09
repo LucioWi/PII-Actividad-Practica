@@ -12,7 +12,7 @@ namespace Practica01.Domain
     {
         public int NroFactura { get; set; }
         public string Fecha { get; set; }
-        public PaymentMethod FormaPago { get; set; }
+        public List<PaymentMethod> FormaPago { get; set; }
         public string Cliente { get; set; }
 
         public override string ToString()

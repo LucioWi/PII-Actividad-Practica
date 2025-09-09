@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Practica01.Domain
 {
-    public class DetailInvoice
+    public class Article
     {
         public int Id { get; set; }
-        public int NroFactura {  get; set; }
-        public List<Article> IdArticulo { get; set; }
-        public int Cantidad { get; set; }
+        public string Nombre { get; set; }
+        public float PrecioUnitario { get; set; }
     }
 }

@@ -53,12 +53,10 @@ namespace Practica01.Data
             bool result;
             try
             {
-                // Abrimos la conexión
                 _connection.Open();
                 var cmd = new SqlCommand(sp, _connection);
                 cmd.CommandType = CommandType.StoredProcedure;
 
-                // Agregamos parámetros si los hay
                 if (param != null)
                 {
                     foreach (SpParameter p in param)
@@ -73,12 +71,10 @@ namespace Practica01.Data
             }
             catch (SqlException ex)
             {
-                // En caso de error, retornamos false
                 result = false;
             }
             finally
             {
-                // Cerramos la conexión
                 _connection.Close();
             }
 
@@ -94,7 +90,6 @@ namespace Practica01.Data
             var cmd = new SqlCommand("SP_Save_DetailInvoice", _connection, transaction);
             cmd.CommandType = CommandType.StoredProcedure;
 
-            // Agregamos los parámetros
             cmd.Parameters.AddWithValue("@idDetalle", detailInvoice.Id);
             cmd.Parameters.AddWithValue("@idArticulo", detailInvoice.IdArticulo);
             cmd.Parameters.AddWithValue("@cantidad", detailInvoice.Cantidad);
@@ -108,29 +103,21 @@ namespace Practica01.Data
             else
             {
 
-                foreach (Invoice i in DetailInvoice)
+                foreach (Invoice i in detailInvoice.NroFactura)
                 {
-                    // Para cada elemento de la lista tenemos que:
-                    // - Crear un comando
-                    SqlCommand cmdDetalle = new SqlCommand("SP_GUARDAR_INGREDIENTE", _connection, transaction);
+
+                    SqlCommand cmdDetalle = new SqlCommand("SP_Save_Invoice", _connection, transaction);
                     cmdDetalle.CommandType = CommandType.StoredProcedure;
 
-                    // --------------------
-                    // POR AHORA, HARDCODEAMOS EL CÓDIGO DEL PRODUCTO
-                    // LO IDEAL ES OBTENERLO A PARTIR DE UN PARÁMETRO DE SALIDA
-                    int codigoProducto = 1;
-                    // --------------------
+                    int codigoFactura = 1;
 
-                    // - Asignar los parámetros
-                    cmdDetalle.Parameters.AddWithValue("@codigo_producto", codigoProducto);
-                    cmdDetalle.Parameters.AddWithValue("@nombre", i.Nombre);
-                    cmdDetalle.Parameters.AddWithValue("@cantidad", i.Cantidad);
-                    cmdDetalle.Parameters.AddWithValue("@unidad", i.Unidad);
+                    cmdDetalle.Parameters.AddWithValue("@nroFactura", i.NroFactura);
+                    cmdDetalle.Parameters.AddWithValue("@fecha", i.Fecha);
+                    cmdDetalle.Parameters.AddWithValue("@idFormaPago", i.FormaPago);
+                    cmdDetalle.Parameters.AddWithValue("@cliente", i.Cliente);
 
-                    // - Ejecutar el comando
                     int affectedRowsDetalle = cmdDetalle.ExecuteNonQuery();
 
-                    // - Validar el resultado y revertir en caso de que sea necesario
                     if (affectedRowsDetalle <= 0)
                     {
                         transaction.Rollback();
@@ -138,8 +125,6 @@ namespace Practica01.Data
                     }
                 }
 
-                // Ya insertamos el maestro y todos sus detalles sin problemas -> COMMIT
-                // Se confirma la transacción y se retorna true
                 transaction.Commit();
                 return true;
             }

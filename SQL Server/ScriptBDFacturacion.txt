@@ -33,89 +33,330 @@ CREATE TABLE DetalleFactura (
     CONSTRAINT FK_DetalleFactura_Articulo FOREIGN KEY (idArticulo) REFERENCES Articulo(idArticulo)
 );
 
-GO
-
-CREATE procedure SP_Get_FormaPago
-as
-select nombre as 'Tipo de pago'
-from FormaPago
-
-GO
-
-CREATE procedure SP_Get_Factura
-as
-select nroFactura as 'Número de factura', fecha as Fecha, fp.nombre as 'Forma de pago', cliente as Cliente
-from Factura as f join FormaPago as fp on f.idFormaPago = fp.idFormaPago
-
-GO
-
-CREATE procedure SP_Get_DetalleFactura
-as
-select f.nroFactura as 'Número de factura', a.nombre as 'Articulo', cantidad Cantidad
-from DetalleFactura as df join Factura as f on df.nroFactura = f.nroFactura
-join Articulo as a on df.idArticulo = a.idArticulo
-
-GO
-
-CREATE procedure SP_Get_ArticuloPago
-as
-select nombre as 'Nombre', precioUnitario as 'Precio unitario'
-from Articulo
-
-GO
-
-CREATE procedure SP_Create_FormaPago
-as
+-- Payment method: save (insert or update)
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[SP_Create_FormaPago]
-    @idFormaPago INT,
-    @nombre NVARCHAR(100)
+CREATE PROCEDURE dbo.SP_Save_Payment_Method
+    @paymentMethodId INT,
+    @name NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        IF @paymentMethodId = 0
+        BEGIN
+            INSERT INTO dbo.FormaPago (nombre)
+            VALUES (@name);
+        END
+        ELSE
+        BEGIN
+            UPDATE dbo.FormaPago
+            SET nombre = @name
+            WHERE idFormaPago = @paymentMethodId;
+        END
+    END TRY
+    BEGIN CATCH
+        THROW;
+    END CATCH
+END
+GO
+
+-- Get payment methods (all)
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE dbo.SP_Get_Payment_Method
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT idFormaPago AS PaymentMethodId, nombre AS PaymentMethodName
+    FROM dbo.FormaPago;
+END
+GO
+
+-- Get single payment method by id
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE dbo.SP_Get_Payment_Method_By_Id
+    @paymentMethodId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT idFormaPago AS PaymentMethodId, nombre AS PaymentMethodName
+    FROM dbo.FormaPago
+    WHERE idFormaPago = @paymentMethodId;
+END
+GO
+
+---------------------------------------------------------------------
+-- Article (Articulo): save (insert or update)
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE dbo.SP_Save_Article
+    @articleId INT,
+    @name NVARCHAR(200),
+    @unitPrice DECIMAL(18,2)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        IF @articleId = 0
+        BEGIN
+            INSERT INTO dbo.Articulo (nombre, precioUnitario)
+            VALUES (@name, @unitPrice);
+        END
+        ELSE
+        BEGIN
+            UPDATE dbo.Articulo
+            SET nombre = @name,
+                precioUnitario = @unitPrice
+            WHERE idArticulo = @articleId;
+        END
+    END TRY
+    BEGIN CATCH
+        THROW;
+    END CATCH
+END
+GO
+
+-- Get all articles
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE dbo.SP_Get_Article
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT idArticulo AS ArticleId,
+           nombre AS ArticleName,
+           precioUnitario AS UnitPrice
+    FROM dbo.Articulo;
+END
+GO
+
+-- Get article by id
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE dbo.SP_Get_Article_By_Id
+    @articleId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT idArticulo AS ArticleId,
+           nombre AS ArticleName,
+           precioUnitario AS UnitPrice
+    FROM dbo.Articulo
+    WHERE idArticulo = @articleId;
+END
+GO
+
+---------------------------------------------------------------------
+-- Invoice master (Factura): insert and return invoice number (assumes nroFactura is IDENTITY)
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE dbo.SP_Save_Invoice
+    @client NVARCHAR(200),
+    @paymentMethodId INT,
+    @invoiceNumber INT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        INSERT INTO dbo.Factura (fecha, idFormaPago, cliente)
+        VALUES (GETDATE(), @paymentMethodId, @client);
+
+        SET @invoiceNumber = CAST(SCOPE_IDENTITY() AS INT);
+    END TRY
+    BEGIN CATCH
+        THROW;
+    END CATCH
+END
+GO
+
+-- Insert invoice detail
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE dbo.SP_Save_Detail
+    @detailId INT,
+    @invoiceNumber INT,
+    @articleId INT,
+    @quantity INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        INSERT INTO dbo.DetalleFactura (idDetalle, nroFactura, idArticulo, cantidad)
+        VALUES (@detailId, @invoiceNumber, @articleId, @quantity);
+    END TRY
+    BEGIN CATCH
+        THROW;
+    END CATCH
+END
+GO
+
+-- Get one invoice by number (with details and article info)
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE dbo.SP_Get_Invoice_By_Id
+    @invoiceNumber INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT
+        f.nroFactura AS InvoiceNumber,
+        f.fecha AS InvoiceDate,
+        f.idFormaPago AS PaymentMethodId,
+        fp.nombre AS PaymentMethodName,
+        f.cliente AS Client,
+        df.idDetalle AS DetailId,
+        df.cantidad AS Quantity,
+        a.idArticulo AS ArticleId,
+        a.nombre AS ArticleName,
+        a.precioUnitario AS UnitPrice
+    FROM dbo.Factura f
+    LEFT JOIN dbo.FormaPago fp ON fp.idFormaPago = f.idFormaPago
+    LEFT JOIN dbo.DetalleFactura df ON df.nroFactura = f.nroFactura
+    LEFT JOIN dbo.Articulo a ON a.idArticulo = df.idArticulo
+    WHERE f.nroFactura = @invoiceNumber;
+END
+GO
+
+-- Get all invoices (summary with detail rows; invoices without details will still appear)
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE dbo.SP_Get_Invoice
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT
+        f.nroFactura AS InvoiceNumber,
+        f.fecha AS InvoiceDate,
+        f.idFormaPago AS PaymentMethodId,
+        fp.nombre AS PaymentMethodName,
+        f.cliente AS Client,
+        df.idDetalle AS DetailId,
+        df.cantidad AS Quantity,
+        a.idArticulo AS ArticleId,
+        a.nombre AS ArticleName,
+        a.precioUnitario AS UnitPrice
+    FROM dbo.Factura f
+    LEFT JOIN dbo.FormaPago fp ON fp.idFormaPago = f.idFormaPago
+    LEFT JOIN dbo.DetalleFactura df ON df.nroFactura = f.nroFactura
+    LEFT JOIN dbo.Articulo a ON a.idArticulo = df.idArticulo
+    ORDER BY f.nroFactura;
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE dbo.SP_Delete_Detail
+    @detailId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        IF NOT EXISTS (SELECT 1 FROM dbo.DetalleFactura WHERE idDetalle = @detailId)
+        BEGIN
+            RAISERROR('Detail with id %d not found.', 16, 1, @detailId);
+            RETURN;
+        END
+
+        BEGIN TRANSACTION;
+            DELETE FROM dbo.DetalleFactura
+            WHERE idDetalle = @detailId;
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0
+            ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END
+GO
+
+-------------------------------------------------------------------
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE dbo.SP_Delete_Invoice
+    @invoiceNumber INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        IF NOT EXISTS (SELECT 1 FROM dbo.Factura WHERE nroFactura = @invoiceNumber)
+        BEGIN
+            RAISERROR('Invoice with number %d not found.', 16, 1, @invoiceNumber);
+            RETURN;
+        END
+
+        BEGIN TRANSACTION;
+            -- Primero borro detalles (si existen)
+            DELETE FROM dbo.DetalleFactura
+            WHERE nroFactura = @invoiceNumber;
+
+            -- Luego borro la factura
+            DELETE FROM dbo.Factura
+            WHERE nroFactura = @invoiceNumber;
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0
+            ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE dbo.SP_Get_Detail
+    @detailId INT
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    IF @idFormaPago = 0
+    IF NOT EXISTS (SELECT 1 FROM dbo.DetalleFactura WHERE idDetalle = @detailId)
     BEGIN
-        INSERT INTO dbo.FormaPago (nombre)
-        VALUES (@nombre)
+        RAISERROR('Detail with id %d not found.', 16, 1, @detailId);
+        RETURN;
     END
-    ELSE
-    BEGIN
-        UPDATE dbo.FormaPago
-        SET nombre = @nombre
-        WHERE idFormaPago = @idFormaPago
-    END
+
+    SELECT
+        df.idDetalle       AS DetailId,
+        df.nroFactura      AS InvoiceNumber,
+        f.fecha            AS InvoiceDate,
+        f.cliente          AS Client,
+        df.idArticulo      AS ArticleId,
+        a.nombre           AS ArticleName,
+        a.precioUnitario   AS UnitPrice,
+        df.cantidad        AS Quantity,
+        (a.precioUnitario * df.cantidad) AS LineTotal
+    FROM dbo.DetalleFactura df
+    LEFT JOIN dbo.Articulo a ON a.idArticulo = df.idArticulo
+    LEFT JOIN dbo.Factura f ON f.nroFactura = df.nroFactura
+    WHERE df.idDetalle = @detailId;
 END
-
-GO
-
-CREATE procedure SP_Create_Articulo
-as
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-ALTER PROCEDURE [dbo].[SP_Create_Articulo]
-    @idArticulo INT,
-    @nombre NVARCHAR(200),
-    @precioUnitario DECIMAL(18,2)
-AS
-BEGIN
-    IF @idArticulo = 0
-    BEGIN
-        INSERT INTO Articulo (nombre, precioUnitario)
-        VALUES (@nombre, @precioUnitario)
-    END
-    ELSE
-    BEGIN
-        UPDATE Articulo
-        SET nombre = @nombre,
-            precioUnitario = @precioUnitario
-        WHERE idArticulo = @idArticulo
-    END
-END
-
 GO

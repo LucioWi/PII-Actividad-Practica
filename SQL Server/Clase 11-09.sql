@@ -21,7 +21,7 @@ where 100>any
 	where cod_cliente = c.cod_cliente
 )
 
---Listar los clientes que todos los productos que comprÛ costaron menos de $100 en 2010
+--Listar los clientes que todos los productos que compr√≥ costaron menos de $100 en 2010
 
 select cod_cliente as Codigo, ape_cliente+' '+nom_cliente as 'Nombre cliente'
 from clientes as c
@@ -34,7 +34,7 @@ where 100>all
 )
 
 
---Genere un reporte con los clientes que vinieron mas de 2 veces el aÒo pasado
+--Genere un reporte con los clientes que vinieron mas de 2 veces el a√±o pasado
 
 select cod_cliente, ape_cliente+' '+nom_cliente as 'Nombre cliente'
 from clientes as c
@@ -60,7 +60,7 @@ from facturas as f join clientes as c on f.cod_cliente = c.cod_cliente
 )
 
 --Mostrar los datos de las facturas para los casos en que se hayan
---hecho menos de 9 facturas ese aÒo
+--hecho menos de 9 facturas ese a√±o
 
 select *
 from facturas as f
@@ -85,7 +85,7 @@ where 1500<
 )
 order by Importe asc
 
---Se quiere saber cuando realizÛ su primer venta cada vendedor y cuanto fue 
+--Se quiere saber cuando realiz√≥ su primer venta cada vendedor y cuanto fue 
 --el importe total de las ventas que ha realizado. Mostrar estos datos en un
 --listado solo para los casos en que su importe promedio de vendido sea
 --superior al importe promedio general (importe promedio de todas las facturas)
@@ -100,3 +100,25 @@ having avg(cantidad*pre_unitario)>
 										select AVG(cantidad*pre_unitario)
 										from detalle_facturas
 									)
+
+--Realice un informe que muestre cuanto fue el total anual facturado 
+--por cada vendedor, para los casos en que el nombre del vendedor 
+--comience con B ni con M, que los numeros de facturas oscilen entre 5
+--y 25 y que el promedio del monto facturado sea inferior al promedio 
+--de ese a√±o.
+
+select v.cod_vendedor, ape_vendedor, YEAR(fecha) as A√±o,
+SUM(cantidad*pre_unitario) Total
+from facturas as f join vendedores as v on f.cod_vendedor = v.cod_vendedor
+join detalle_facturas as df on df.nro_factura = f.nro_factura
+where nom_vendedor not like '[B,M]%' 
+	and f.nro_factura between 5 and 25
+group by v.cod_vendedor, ape_vendedor, YEAR(fecha)
+having AVG(cantidad*pre_unitario)<
+									(
+										select AVG(cantidad*pre_unitario)
+										from detalle_facturas as df1 join
+										facturas as f1 on df1.nro_factura =f1.nro_factura
+										where YEAR(fecha) = YEAR(f.fecha)
+									)
+order by 1, A√±o asc

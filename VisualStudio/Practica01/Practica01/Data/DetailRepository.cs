@@ -21,7 +21,6 @@ namespace Practica01.Data
                 }
             };
 
-            // Eliminamos el registro correspondiente a través del SP
             return DataHelper.GetInstance().ExecuteSpDml("SP_Delete_Detail", param);
         }
 

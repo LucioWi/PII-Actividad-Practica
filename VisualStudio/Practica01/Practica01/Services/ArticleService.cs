@@ -8,6 +8,6 @@ namespace Practica01.Services
 {
     public class ArticleService
     {
-        //Por agregar en futuras practicas!
+        //Por agregar en futuras practicas
     }
 }

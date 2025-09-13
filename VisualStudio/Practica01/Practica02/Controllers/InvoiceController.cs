@@ -1,22 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Practica01.Domain;
+using Practica01.Services;
 
 
 namespace Practica02.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DetailInvoiceController : ControllerBase
+    public class InvoiceController : ControllerBase
     {
-        // GET: api/<DetailInvoiceController>
+        private InvoiceService _service;
+        public InvoiceController() 
+        { 
+            _service = new InvoiceService();
+        }
+        // GET: api/<InvoiceController>
         [HttpGet]
         public IActionResult Get()
         {
-            List<DetailInvoice> lst = null;
             try
             {
-                
-                return Ok(lst);
+                var invoices = _service.GetInvoice();
+                return Ok(invoices);
 
             }
             catch (Exception ex)
@@ -25,29 +30,32 @@ namespace Practica02.Controllers
             }
         }
 
-        // GET api/<DetailInvoiceController>/5
+        // GET api/<InvoiceController>/5
         [HttpGet("{id}")]
         public string Get(int id)
         {
             return "value";
         }
 
-        // POST api/<DetailInvoiceController>
+        // POST api/<InvoiceController>
         [HttpPost]
         public void Post([FromBody] string value)
         {
+
         }
 
-        // PUT api/<DetailInvoiceController>/5
+        // PUT api/<InvoiceController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
+
         }
 
-        // DELETE api/<DetailInvoiceController>/5
+        // DELETE api/<InvoiceController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+
         }
     }
 }

@@ -21,14 +21,18 @@ namespace Practica01.Services
             return _repository.GetAll();
         }
 
-        public Invoice? GetInvoice(int id)
+        public Invoice? GetInvoiceById(int id)
         {
             return _repository.GetById(id);
         }
 
-        public bool SaveIngredient(Invoice invoice)
+        public bool SaveInvoice(Invoice invoice)
         {
             return _repository.Save(invoice);
+        }
+        public bool DeleteInvoice(int id)
+        {
+            return _repository.Delete(id);
         }
     }
 }

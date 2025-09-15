@@ -12,3 +12,18 @@ C:\Users\Usuario\source\repos\Practica01\Practica01\obj\Debug\net8.0\ref\Practic
 C:\Users\Usuario\source\repos\Practica01\Practica01\obj\Debug\net8.0\Practica01.csproj.AssemblyReference.cache
 C:\Users\Usuario\source\repos\Practica01\Practica01\obj\Debug\net8.0\Practica01.Properties.Resources.resources
 C:\Users\Usuario\source\repos\Practica01\Practica01\obj\Debug\net8.0\Practica01.csproj.GenerateResource.cache
+D:\Users\Usuario\Desktop\Facultad\Programacion 2\PII-Actividad-Practica\VisualStudio\Practica01\Practica01\bin\Debug\net8.0\Practica01.deps.json
+D:\Users\Usuario\Desktop\Facultad\Programacion 2\PII-Actividad-Practica\VisualStudio\Practica01\Practica01\bin\Debug\net8.0\Practica01.dll
+D:\Users\Usuario\Desktop\Facultad\Programacion 2\PII-Actividad-Practica\VisualStudio\Practica01\Practica01\bin\Debug\net8.0\Practica01.pdb
+D:\Users\Usuario\Desktop\Facultad\Programacion 2\PII-Actividad-Practica\VisualStudio\Practica01\Practica01\obj\Debug\net8.0\Practica01.csproj.AssemblyReference.cache
+D:\Users\Usuario\Desktop\Facultad\Programacion 2\PII-Actividad-Practica\VisualStudio\Practica01\Practica01\obj\Debug\net8.0\Practica01.Properties.Resources.resources
+D:\Users\Usuario\Desktop\Facultad\Programacion 2\PII-Actividad-Practica\VisualStudio\Practica01\Practica01\obj\Debug\net8.0\Practica01.csproj.GenerateResource.cache
+D:\Users\Usuario\Desktop\Facultad\Programacion 2\PII-Actividad-Practica\VisualStudio\Practica01\Practica01\obj\Debug\net8.0\Practica01.GeneratedMSBuildEditorConfig.editorconfig
+D:\Users\Usuario\Desktop\Facultad\Programacion 2\PII-Actividad-Practica\VisualStudio\Practica01\Practica01\obj\Debug\net8.0\Practica01.AssemblyInfoInputs.cache
+D:\Users\Usuario\Desktop\Facultad\Programacion 2\PII-Actividad-Practica\VisualStudio\Practica01\Practica01\obj\Debug\net8.0\Practica01.AssemblyInfo.cs
+D:\Users\Usuario\Desktop\Facultad\Programacion 2\PII-Actividad-Practica\VisualStudio\Practica01\Practica01\obj\Debug\net8.0\Practica01.csproj.CoreCompileInputs.cache
+D:\Users\Usuario\Desktop\Facultad\Programacion 2\PII-Actividad-Practica\VisualStudio\Practica01\Practica01\obj\Debug\net8.0\Practica01.sourcelink.json
+D:\Users\Usuario\Desktop\Facultad\Programacion 2\PII-Actividad-Practica\VisualStudio\Practica01\Practica01\obj\Debug\net8.0\Practica01.dll
+D:\Users\Usuario\Desktop\Facultad\Programacion 2\PII-Actividad-Practica\VisualStudio\Practica01\Practica01\obj\Debug\net8.0\refint\Practica01.dll
+D:\Users\Usuario\Desktop\Facultad\Programacion 2\PII-Actividad-Practica\VisualStudio\Practica01\Practica01\obj\Debug\net8.0\Practica01.pdb
+D:\Users\Usuario\Desktop\Facultad\Programacion 2\PII-Actividad-Practica\VisualStudio\Practica01\Practica01\obj\Debug\net8.0\ref\Practica01.dll

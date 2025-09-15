@@ -21,7 +21,7 @@ namespace Practica01.Data
                 }
             };
 
-            return DataHelper.GetInstance().ExecuteSpDml("SP_Get_Invoice", param);
+            return DataHelper.GetInstance().ExecuteSpDml("SP_Delete_Invoice", param);
         }
 
         public List<Invoice> GetAll()
@@ -83,7 +83,7 @@ namespace Practica01.Data
                 new SpParameter("@cliente", invoice.Cliente)
             };
 
-            return DataHelper.GetInstance().ExecuteSpDml("SP_Save_Detail", param);
+            return DataHelper.GetInstance().ExecuteSpDml("SP_Save_Invoice", param);
         }
     }
 }

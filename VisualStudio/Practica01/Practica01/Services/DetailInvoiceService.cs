@@ -16,17 +16,17 @@ namespace Practica01.Services
             _repository = new DetailRepository();
         }
 
-        public List<DetailInvoice> GetProducts()
+        public List<DetailInvoice> GetDetail()
         {
             return _repository.GetAll();
         }
 
-        public DetailInvoice? GetProductById(int id)
+        public DetailInvoice? GetDetailById(int id)
         {
             return _repository.GetById(id);
         }
 
-        public bool SaveProduct(DetailInvoice detail)
+        public bool SaveDetail(DetailInvoice detail)
         {
             if (detail.Cantidad < 0)
             {
@@ -34,15 +34,6 @@ namespace Practica01.Services
             }
 
             return _repository.Save(detail);
-        }
-
-        public bool DeleteProduct(int id)
-        {
-
-            var detailInBD = _repository.GetById(id);
-
-            return detailInBD != null ? _repository.Delete(id) : false;
-
         }
 
         public bool ExecuteTransaction(DetailInvoice detail)

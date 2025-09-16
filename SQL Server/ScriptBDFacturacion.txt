@@ -17,7 +17,7 @@ CREATE TABLE Articulo (
 );
 
 CREATE TABLE Factura (
-    nroFactura INT PRIMARY KEY,
+    nroFactura INT IDENTITY(1,1) PRIMARY KEY,
     fecha DATE NOT NULL,
     idFormaPago INT NOT NULL,
     cliente NVARCHAR(100) NOT NULL,

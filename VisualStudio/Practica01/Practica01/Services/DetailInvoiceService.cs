@@ -35,10 +35,5 @@ namespace Practica01.Services
 
             return _repository.Save(detail);
         }
-
-        public bool ExecuteTransaction(DetailInvoice detail)
-        {
-            return DataHelper.GetInstance().ExecuteTransaction(detail);
-        }
     }
 }

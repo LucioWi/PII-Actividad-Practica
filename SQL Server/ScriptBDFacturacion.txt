@@ -191,7 +191,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE dbo.SP_Save_Detail
-    @detailId INT,
     @invoiceNumber INT,
     @articleId INT,
     @quantity INT
@@ -199,8 +198,8 @@ AS
 BEGIN
     SET NOCOUNT ON;
     BEGIN TRY
-        INSERT INTO dbo.DetalleFactura (idDetalle, nroFactura, idArticulo, cantidad)
-        VALUES (@detailId, @invoiceNumber, @articleId, @quantity);
+        INSERT INTO dbo.DetalleFactura (nroFactura, idArticulo, cantidad)
+        VALUES (@invoiceNumber, @articleId, @quantity);
     END TRY
     BEGIN CATCH
         THROW;

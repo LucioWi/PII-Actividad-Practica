@@ -9,8 +9,7 @@ namespace Practica01.Domain
     public class DetailInvoice
     {
         public int Id { get; set; }
-        public List<Invoice> NroFactura {  get; set; }
-        public List<Article> IdArticulo { get; set; }
+        public int IdArticulo { get; set; }
         public int Cantidad { get; set; }
     }
 }

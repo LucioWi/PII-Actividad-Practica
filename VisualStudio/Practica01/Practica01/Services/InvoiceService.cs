@@ -34,5 +34,9 @@ namespace Practica01.Services
         {
             return _repository.Delete(id);
         }
+        public bool ExecuteTransaction(Invoice invoice)
+        {
+            return DataHelper.GetInstance().ExecuteTransaction(invoice);
+        }
     }
 }

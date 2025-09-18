@@ -34,8 +34,7 @@ namespace Practica01.Data
             {
                 DetailInvoice dv = new DetailInvoice();
                 dv.Id = (int)row["idDetalleFactura"];
-                dv.NroFactura = (List<Invoice>)row["nroFactura"];
-                dv.IdArticulo = (List<Article>)row["idArticulo"];
+                dv.IdArticulo = (int)row["idArticulo"];
                 dv.Cantidad = (int)row["cantidad"];
 
                 lst.Add(dv);
@@ -62,8 +61,7 @@ namespace Practica01.Data
                 DetailInvoice di = new DetailInvoice()
                 {
                     Id = (int)dt.Rows[0]["idDetalle"],
-                    NroFactura = (List<Invoice>)dt.Rows[0]["nroFactura"],
-                    IdArticulo = (List<Article>)dt.Rows[0]["idArticulo"],
+                    IdArticulo = (int)dt.Rows[0]["idArticulo"],
                     Cantidad = (int)dt.Rows[0]["cantidad"],
                 };
 
@@ -78,7 +76,6 @@ namespace Practica01.Data
             List<SpParameter> param = new List<SpParameter>()
             {
                 new SpParameter("@idDetalle", detail.Id),
-                new SpParameter("@nroFactura", detail.NroFactura),
                 new SpParameter("@idArticulo", detail.IdArticulo),
                 new SpParameter("@cantidad", detail.Cantidad)
             };

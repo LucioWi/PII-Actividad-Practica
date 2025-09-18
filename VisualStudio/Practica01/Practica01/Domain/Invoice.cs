@@ -11,13 +11,15 @@ namespace Practica01.Domain
     public class Invoice // La BD esta en español
     {
         public int NroFactura { get; set; }
-        public string Fecha { get; set; }
-        public List<PaymentMethod> FormaPago { get; set; }
+        public DateTime Fecha { get; set; }
+        public int IdFormaPago { get; set; }
         public string Cliente { get; set; }
+        public List<DetailInvoice> Details { get; set; }
+
 
         public override string ToString()
         {
-            return NroFactura + " - " + Fecha + " - " + FormaPago;
+            return NroFactura + " - " + Fecha + " - " + IdFormaPago;
         }
     }
 }

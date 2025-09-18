@@ -34,8 +34,8 @@ namespace Practica01.Data
             {
                 Invoice i = new Invoice();
                 i.NroFactura = (int)row["nroFactura"];
-                i.Fecha = (string)row["fecha"];
-                i.FormaPago = (List<PaymentMethod>)row["idFormaPago"];
+                i.Fecha = (DateTime)row["fecha"];
+                i.IdFormaPago = (int)row["idFormaPago"];
                 i.Cliente = (string)row["cliente"];
 
                 lst.Add(i);
@@ -62,8 +62,8 @@ namespace Practica01.Data
                 Invoice di = new Invoice()
                 {
                     NroFactura = (int)dt.Rows[0]["nroFactura"],
-                    Fecha = (string)dt.Rows[0]["fecha"],
-                    FormaPago = (List<PaymentMethod>)dt.Rows[0]["idFormaPago"],
+                    Fecha = (DateTime)dt.Rows[0]["fecha"],
+                    IdFormaPago = (int)dt.Rows[0]["idFormaPago"],
                     Cliente = (string)dt.Rows[0]["cliente"],
                 };
 
@@ -79,7 +79,7 @@ namespace Practica01.Data
             {
                 new SpParameter("@nroFactura", invoice.NroFactura),
                 new SpParameter("@fecha", invoice.Fecha),
-                new SpParameter("@idFormaPago", invoice.FormaPago),
+                new SpParameter("@idFormaPago", invoice.IdFormaPago),
                 new SpParameter("@cliente", invoice.Cliente)
             };
 

@@ -81,52 +81,78 @@ namespace Practica01.Data
             return result;
         }
 
-        public bool ExecuteTransaction(DetailInvoice detailInvoice)
+        public bool ExecuteTransaction(Invoice invoice)
         {
             _connection.Open();
-
             SqlTransaction transaction = _connection.BeginTransaction();
 
-            var cmd = new SqlCommand("SP_Save_DetailInvoice", _connection, transaction);
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            cmd.Parameters.AddWithValue("@idDetalle", detailInvoice.Id);
-            cmd.Parameters.AddWithValue("@idArticulo", detailInvoice.IdArticulo);
-            cmd.Parameters.AddWithValue("@cantidad", detailInvoice.Cantidad);
-
-            int affectedRows = cmd.ExecuteNonQuery();
-            if (affectedRows <= 0)
+            try
             {
-                transaction.Rollback();
-                return false;
-            }
-            else
-            {
-
-                foreach (Invoice i in detailInvoice.NroFactura)
+                // Parseo de fecha (si tu Invoice.Fecha es string)
+                DateTime fechaParsed;
+                string fechaStr = Convert.ToString(invoice.Fecha);
+                if (!DateTime.TryParse(fechaStr, out fechaParsed))
                 {
+                    transaction.Rollback();
+                    return false;
+                }
 
-                    SqlCommand cmdDetalle = new SqlCommand("SP_Save_Invoice", _connection, transaction);
-                    cmdDetalle.CommandType = CommandType.StoredProcedure;
+                // Insertar factura (padre) y obtener nro generado
+                using (var cmd = new SqlCommand("SP_Save_Invoice", _connection, transaction))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                    int codigoFactura = 1;
+                    cmd.Parameters.Add(new SqlParameter("@fecha", System.Data.SqlDbType.DateTime) { Value = fechaParsed });
+                    cmd.Parameters.AddWithValue("@idFormaPago", invoice.IdFormaPago);
+                    cmd.Parameters.AddWithValue("@cliente", invoice.Cliente);
 
-                    cmdDetalle.Parameters.AddWithValue("@nroFactura", i.NroFactura);
-                    cmdDetalle.Parameters.AddWithValue("@fecha", i.Fecha);
-                    cmdDetalle.Parameters.AddWithValue("@idFormaPago", i.FormaPago);
-                    cmdDetalle.Parameters.AddWithValue("@cliente", i.Cliente);
+                    var outParam = new SqlParameter("@invoiceNumber", System.Data.SqlDbType.Int)
+                    {
+                        Direction = System.Data.ParameterDirection.Output
+                    };
+                    cmd.Parameters.Add(outParam);
 
-                    int affectedRowsDetalle = cmdDetalle.ExecuteNonQuery();
+                    cmd.ExecuteNonQuery(); // con NOCOUNT ON puede devolver -1, ignoramos ese valor
 
-                    if (affectedRowsDetalle <= 0)
+                    int invoiceNumber = (outParam.Value == DBNull.Value) ? 0 : Convert.ToInt32(outParam.Value);
+                    if (invoiceNumber <= 0)
                     {
                         transaction.Rollback();
                         return false;
                     }
-                }
 
-                transaction.Commit();
-                return true;
+                    // Insertar detalles (hijos)
+                    if (invoice.Details != null)
+                    {
+                        foreach (DetailInvoice d in invoice.Details)
+                        {
+                            using (var cmdDetalle = new SqlCommand("SP_Save_Detail", _connection, transaction))
+                            {
+                                cmdDetalle.CommandType = CommandType.StoredProcedure;
+
+                                cmdDetalle.Parameters.AddWithValue("@invoiceNumber", invoiceNumber);
+                                cmdDetalle.Parameters.AddWithValue("@articleId", d.IdArticulo);
+                                cmdDetalle.Parameters.AddWithValue("@quantity", d.Cantidad);
+
+                                // NO comprobar affectedRows porque SP usa SET NOCOUNT ON (ExecuteNonQuery -> -1)
+                                cmdDetalle.ExecuteNonQuery();
+                                // si querés una comprobación extra: podrías validar que no se lanzó excepción
+                            }
+                        }
+                    }
+
+                    transaction.Commit();
+                    return true;
+                }
+            }
+            catch
+            {
+                try { transaction.Rollback(); } catch { }
+                return false;
+            }
+            finally
+            {
+                _connection.Close();
             }
         }
     }

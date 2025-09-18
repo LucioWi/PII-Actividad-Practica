@@ -21,7 +21,6 @@ CREATE TABLE Factura (
     fecha DATE NOT NULL,
     idFormaPago INT NOT NULL,
     cliente NVARCHAR(100) NOT NULL,
-    CONSTRAINT FK_Factura_FormaPago FOREIGN KEY (idFormaPago) REFERENCES FormaPago(idFormaPago)
 );
 
 CREATE TABLE DetalleFactura (
@@ -30,7 +29,6 @@ CREATE TABLE DetalleFactura (
     idArticulo INT NOT NULL,
     cantidad INT NOT NULL CHECK (cantidad > 0),
     CONSTRAINT FK_DetalleFactura_Factura FOREIGN KEY (nroFactura) REFERENCES Factura(nroFactura),
-    CONSTRAINT FK_DetalleFactura_Articulo FOREIGN KEY (idArticulo) REFERENCES Articulo(idArticulo)
 );
 
 -- Payment method: save (insert or update)
@@ -167,15 +165,16 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE dbo.SP_Save_Invoice
-    @client NVARCHAR(200),
-    @paymentMethodId INT,
+    @fecha DATETIME,
+    @idFormaPago INT,
+    @cliente NVARCHAR(200),
     @invoiceNumber INT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
     BEGIN TRY
         INSERT INTO dbo.Factura (fecha, idFormaPago, cliente)
-        VALUES (GETDATE(), @paymentMethodId, @client);
+        VALUES (@fecha, @idFormaPago, @cliente);
 
         SET @invoiceNumber = CAST(SCOPE_IDENTITY() AS INT);
     END TRY

@@ -12,7 +12,8 @@ namespace ParcialWebApi.Repositories
         }
         public void Create(Criptomoneda criptomoneda)
         {
-            throw new NotImplementedException();
+            _context.Criptomonedas.Add(criptomoneda);
+            _context.SaveChanges();
         }
         public List<Criptomoneda> GetAll()
         {

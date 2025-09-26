@@ -28,7 +28,23 @@ namespace ParcialWebApi.Controllers
                 return Ok(criptos);
         }
 
-            // GET: api/crypto/{id}
+        [HttpPost]
+        public ActionResult<Criptomoneda> Post([FromBody] Criptomoneda value)
+        {
+            try
+            {
+                if (value == null)
+                    return BadRequest(new { mensaje = "Error. Faltan datos requeridos!" });
+                _cryptoRepository.Create(value);
+                return CreatedAtAction(nameof(GetAll), new { id = value.Id }, value);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = "Error al crear producto!" });
+            }
+        }
+
+        // GET: api/crypto/{id}
         [HttpGet("{id}")]
         public ActionResult<Criptomoneda> GetById(int id)
         {
@@ -82,9 +98,17 @@ namespace ParcialWebApi.Controllers
                 if (existente == null)
                     return NotFound($"No se encontró la criptomoneda con ID {id}");
 
-                _cryptoRepository.Delete(id);
-                return NoContent();
-            }
+                // Verifica si el estado ya es "H" antes de intentar cambiarlo
+                if (existente.Estado == "H")
+                {
+                    // Actualiza el estado de "H" a "NH"
+                    existente.Estado = "NH";
+                    _cryptoRepository.Update(existente);  // Utiliza el método Update en vez de Delete
+                    return Ok($"El estado de la criptomoneda con ID {id} ha sido actualizado a 'NH'.");
+                }
+
+                return BadRequest("La criptomoneda no está en estado 'H' para ser cambiada a 'NH'.");
+        }
 
             [HttpPut("updatevalor/{simbolo}")]
             public IActionResult UpdateValorActual(string simbolo, [FromBody] ValorUpdateDto dto)

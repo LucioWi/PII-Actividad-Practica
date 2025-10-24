@@ -1,0 +1,26 @@
+<div class="card p-4 shadow-sm card-consulta">
+    <h2 class="card-title text-info">🔍 2. Listado y Filtro de Libros (GET)</h2>
+
+    <div class="row mb-3 align-items-end">
+        <div class="col-md-4">
+            <label for="filtroGenero" class="form-label">Filtrar por Género:</label>
+            <input type="text" class="form-control" id="filtroGenero" placeholder="Ej. Drama">
+        </div>
+        <div class="col-md-8">
+            <button class="btn btn-warning" onclick="filtrarPorGenero()">Buscar por Género</button>
+            <button class="btn btn-info ms-2" onclick="cargarLibros()">Mostrar Todos</button>
+        </div>
+    </div>
+
+    <table class="table table-striped table-hover mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>ISBN</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+</div>
+</div>

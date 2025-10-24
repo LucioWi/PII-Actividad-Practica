@@ -1,0 +1,29 @@
+<div class="card p-4 mb-5 shadow-sm card-alta">
+    <h2 class="card-title text-success">📝 1. Registrar Nuevo Libro (POST)</h2>
+    <form id="formularioAlta">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="nombre" class="form-label">Título (*)</label>
+                <input type="text" class="form-control" id="nombre" required>
+            </div>
+            <div class="col-md-6">
+                <label for="isbn" class="form-label">ISBN (*)</label>
+                <input type="text" class="form-control" id="isbn" required>
+            </div>
+            <div class="col-md-4">
+                <label for="fechaPublicacion" class="form-label">Fecha Pub. (*)</label>
+                <input type="text" class="form-control" id="fechaPublicacion" placeholder="Ej: 2025-01-01" required>
+            </div>
+            <div class="col-md-4">
+                <label for="genero" class="form-label">Género</label>
+                <input type="text" class="form-control" id="genero">
+            </div>
+            <div class="col-md-4">
+                <label for="autor" class="form-label">ID Autor (*)</label>
+                <input type="number" class="form-control" id="autor" value="1" min="1" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success mt-4 w-100">Guardar Libro</button>
+    </form>
+    <div id="mensajeAlta" class="mt-3 text-center" style="display: none;"></div>
+</div>
